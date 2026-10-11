@@ -1,37 +1,30 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/inventory_db
-    username: postgres  # Cambia por tu usuario de PostgreSQL
-    password: CrudJava2026!  # Cambia por tu contraseña de PostgreSQL
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/inventory_db}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:CrudJava2026!}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
     database: postgresql
-
-  # Para permitir el acceso a H2 Console (opcional)
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
+    open-in-view: false
 
 server:
-  port: 8081
+  port: ${SERVER_PORT:8081}
   servlet:
-    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
 
-# JWT Configuration
 app:
   jwt:
-    secret: "miClaveSecretaMuySeguraYCompleja1234567890ParaJWTTokenDe256Bits"
-    expiration: 86400000  # 24 horas en milisegundos
+    secret: ${JWT_SECRET:miClaveSecretaMuySeguraYCompleja1234567890ParaJWTTokenDe256Bits}
+    expiration: ${JWT_EXPIRATION:86400000}
 
-# Logging (opcional)
 logging:
   level:
     com.kyoran.inventory_api: DEBUG
