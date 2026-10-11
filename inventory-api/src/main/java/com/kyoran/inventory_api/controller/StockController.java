@@ -1,8 +1,11 @@
 package com.kyoran.inventory_api.controller;
 
+import com.kyoran.inventory_api.entity.Product;
 import com.kyoran.inventory_api.entity.Stock;
+import com.kyoran.inventory_api.repository.ProductRepository;
 import com.kyoran.inventory_api.repository.StockRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +17,9 @@ public class StockController {
 
     @Autowired
     private StockRepository stockRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     // Listar todo el stock
     @GetMapping
@@ -30,6 +36,12 @@ public class StockController {
     // Crear nuevo registro de stock
     @PostMapping
     public Stock createStock(@RequestBody Stock stock) {
+        // Asignar la relación product si viene el productId
+        if (stock.getProductId() != null && stock.getProductId() > 0) {
+            Product product = productRepository.findById(stock.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + stock.getProductId()));
+            stock.setProduct(product);
+        }
         return stockRepository.save(stock);
     }
 
@@ -39,19 +51,26 @@ public class StockController {
         Stock stock = stockRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Stock no encontrado con ID: " + id));
 
-        stock.setProductId(stockDetails.getProductId()); // <-- cambiado
+        stock.setProductId(stockDetails.getProductId());
         stock.setQuantity(stockDetails.getQuantity());
+
+        // Actualizar también la relación
+        if (stockDetails.getProductId() != null && stockDetails.getProductId() > 0) {
+            Product product = productRepository.findById(stockDetails.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + stockDetails.getProductId()));
+            stock.setProduct(product);
+        }
 
         return stockRepository.save(stock);
     }
 
     // Eliminar registro de stock
     @DeleteMapping("/{id}")
-    public String deleteStock(@PathVariable Long id) {
+    public ResponseEntity<String> deleteStock(@PathVariable Long id) {
         Stock stock = stockRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Stock no encontrado con ID: " + id));
 
         stockRepository.delete(stock);
-        return "Stock con ID " + id + " eliminado correctamente";
+        return ResponseEntity.ok("Stock con ID " + id + " eliminado correctamente");
     }
 }
