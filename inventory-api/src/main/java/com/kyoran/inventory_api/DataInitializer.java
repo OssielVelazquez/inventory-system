@@ -29,7 +29,7 @@ public class DataInitializer implements CommandLineRunner {
         createDemoUser("manager", "manager@inventory.com", "manager123", "MANAGER");
         createDemoUser("user", "user@inventory.com", "user123", "USER");
 
-        log.info("Inicialización de usuarios completada");
+        log.info("Inicializacion de usuarios completada");
     }
 
     private void createDemoUser(String username, String email, String password, String role) {

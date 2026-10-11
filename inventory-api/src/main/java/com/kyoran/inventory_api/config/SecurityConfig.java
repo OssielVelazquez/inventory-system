@@ -42,22 +42,29 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
 
-                        // ✅ Solo ADMIN puede gestionar usuarios
+                        // Swagger / OpenAPI
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**"
+                        ).permitAll()
+
+                        // Solo ADMIN puede gestionar usuarios
                         .requestMatchers("/users/**").hasRole("ADMIN")
 
-                        // ✅ PRODUCTOS - según rol
+                        // PRODUCTOS - según rol
                         .requestMatchers(HttpMethod.POST, "/products/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/products/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/products/**").authenticated()
 
-                        // ✅ CATEGORÍAS - según rol
+                        // CATEGORÍAS - según rol
                         .requestMatchers(HttpMethod.POST, "/categories/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/categories/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/categories/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/categories/**").authenticated()
 
-                        // ✅ STOCK - según rol
+                        // STOCK - según rol
                         .requestMatchers(HttpMethod.POST, "/stock/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/stock/**").hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/stock/**").hasRole("ADMIN")
