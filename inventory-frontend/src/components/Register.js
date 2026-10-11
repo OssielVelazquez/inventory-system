@@ -1,7 +1,7 @@
 // src/components/Register.js - CON CAMPO DE EMAIL
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../services/api';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -68,12 +68,11 @@ function Register() {
     setLoading(true);
 
     try {
-       await axios.post('http://localhost:8081/api/auth/register', {
-        username: cleanUsername,
-        email: cleanEmail,
-        password: formData.password
-      });
-      
+       await api.post('/api/auth/register', {
+         username: cleanUsername,
+         email: cleanEmail,
+         password: formData.password
+        });
       
       setSuccess('✅ Usuario registrado exitosamente. Redirigiendo al login...');
       

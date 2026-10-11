@@ -1,6 +1,6 @@
 // src/components/ProductList.js
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import productService from '../services/productService';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -23,19 +23,19 @@ const ProductList = () => {
   const canEdit = isAdmin || isManager;  // ADMIN y MANAGER pueden editar/crear
   const canDelete = isAdmin;  // Solo ADMIN puede eliminar
 
-  // Cargar productos
-  const loadProducts = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await api.get('http://localhost:8081/products');
-      setProducts(response.data);
-    } catch (error) {
-      setError('Error al cargar productos. Verifica que el backend esté corriendo.');
-    } finally {
-      setLoading(false);
-    }
-  };
+ const loadProducts = async () => {
+        try {
+          setLoading(true);
+          setError(null);
+          const data = await productService.getAllProducts();
+          setProducts(data);
+       }  catch (error) {
+          console.error('Error loading products:', error);
+          setError('Error al cargar productos. Verifica que el backend esté corriendo.');
+       }  finally {
+          setLoading(false);
+       }
+     };
 
   useEffect(() => {
     loadProducts();
@@ -61,10 +61,10 @@ const ProductList = () => {
       };
 
       if (editingProduct) {
-        await api.put(`http://localhost:8081/products/${editingProduct.id}`, productData);
+        await productService.updateProduct(editingProduct.id, productData);
         alert('✅ Producto actualizado exitosamente');
       } else {
-        await api.post('http://localhost:8081/products', productData);
+        await productService.createProduct(productData);
         alert('✅ Producto creado exitosamente');
       }
       
@@ -99,7 +99,7 @@ const ProductList = () => {
     }
     if (window.confirm('¿Estás seguro de eliminar este producto?')) {
       try {
-        await api.delete(`http://localhost:8081/products/${id}`);
+        await productService.deleteProduct(id);
         alert('✅ Producto eliminado exitosamente');
         loadProducts();
       } catch (error) {

@@ -1,6 +1,6 @@
-// src/components/StockList.js
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import stockService from '../services/stockService';
+import productService from '../services/productService';
 
 const StockList = () => {
   const [stockItems, setStockItems] = useState([]);
@@ -21,12 +21,11 @@ const StockList = () => {
   const canEdit = isAdmin || isManager;  // ADMIN y MANAGER pueden editar/crear
   const canDelete = isAdmin;  // Solo ADMIN puede eliminar
 
-  // Cargar stock
   const loadStock = async () => {
     try {
       setLoading(true);
-      const response = await api.get('http://localhost:8081/stock');
-      setStockItems(response.data);
+      const data = await stockService.getAllStock();
+      setStockItems(data);
     } catch (error) {
       alert('Error al cargar stock');
     } finally {
@@ -38,8 +37,8 @@ const StockList = () => {
 // Cargar productos
 const loadProducts = async () => {
   try {
-    const response = await api.get('http://localhost:8081/products');
-    setProducts(response.data);
+    const data = await productService.getAllProducts();
+    setProducts(data);
   } catch (error) {
     console.error('Error loading products:', error);
     alert('Error al cargar productos');
@@ -74,10 +73,10 @@ const loadProducts = async () => {
       };
 
       if (editingStock) {
-        await api.put(`http://localhost:8081/stock/${editingStock.id}`, stockData);
+        await stockService.updateStock(editingStock.id, stockData);
         alert('✅ Stock actualizado exitosamente');
       } else {
-        await api.post('http://localhost:8081/stock', stockData);
+        await stockService.createStock(stockData);
         alert('✅ Stock registrado exitosamente');
       }
       
@@ -110,7 +109,7 @@ const loadProducts = async () => {
     }
     if (window.confirm('¿Estás seguro de eliminar este registro de stock?')) {
       try {
-        await api.delete(`http://localhost:8081/stock/${id}`);
+        await stockService.deleteStock(id);
         alert('✅ Stock eliminado exitosamente');
         loadStock();
       } catch (error) {

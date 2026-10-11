@@ -1,32 +1,29 @@
 // src/services/productService.js
-import axios from 'axios';
 import api from './api';
-
-const API_URL = 'http://localhost:8081/products'; // Sin /api/
 
 const productService = {
   getAllProducts: async () => {
-    const response = await api.get(API_URL);
+    const response = await api.get('/products');
     return response.data;
   },
-  
+
   getProductById: async (id) => {
-    const response = await api.get(`${API_URL}/${id}`);
+    const response = await api.get(`/products/${id}`);
     return response.data;
   },
-  
+
   createProduct: async (product) => {
-    const response = await api.post(API_URL, product);
+    const response = await api.post('/products', product);
     return response.data;
   },
-  
+
   updateProduct: async (id, product) => {
-    const response = await api.put(`${API_URL}/${id}`, product);
+    const response = await api.put(`/products/${id}`, product);
     return response.data;
   },
-  
+
   deleteProduct: async (id) => {
-    const response = await api.delete(`${API_URL}/${id}`);
+    const response = await api.delete(`/products/${id}`);
     return response.data;
   }
 };

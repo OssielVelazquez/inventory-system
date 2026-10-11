@@ -1,6 +1,5 @@
-// src/components/UserList.js
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import userService from '../services/userService';
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -16,18 +15,18 @@ const UserList = () => {
     enabled: true
   });
 
-  // Cargar usuarios
-  const loadUsers = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get('/users');
-      setUsers(response.data);
-    } catch (error) {
-      alert('Error al cargar usuarios');
-    } finally {
-      setLoading(false);
-    }
-  };
+const loadUsers = async () => {
+  try {
+    setLoading(true);
+    const data = await userService.getAllUsers();
+    setUsers(data);
+  } catch (error) {
+    console.error('Error loading users:', error);
+    alert('Error al cargar usuarios');
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     loadUsers();
@@ -60,12 +59,12 @@ const UserList = () => {
       }
 
       if (editingUser) {
-        await api.put(`/users/${editingUser.id}`, userData);
-        alert('✅ Usuario actualizado exitosamente');
-      } else {
-        await api.post('/users', userData);
-        alert('✅ Usuario creado exitosamente');
-      }
+          await userService.updateUser(editingUser.id, userData);
+          alert('✅ Usuario actualizado exitosamente');
+          } else {
+            await userService.createUser(userData);
+            alert('✅ Usuario creado exitosamente');
+          }
 
       resetForm();
       loadUsers();
@@ -91,7 +90,7 @@ const UserList = () => {
   const handleDelete = async (id) => {
     if (window.confirm('¿Estás seguro de eliminar este usuario?')) {
       try {
-        await api.delete(`/users/${id}`);
+        await userService.deleteUser(id);
         alert('✅ Usuario eliminado exitosamente');
         loadUsers();
       } catch (error) {

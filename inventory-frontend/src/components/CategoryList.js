@@ -1,6 +1,5 @@
-// src/components/CategoryList.js
 import React, { useState, useEffect } from 'react';
-import api from '../services/api';
+import categoryService from '../services/categoryService';
 
 const CategoryList = () => {
   const [categories, setCategories] = useState([]);
@@ -22,9 +21,10 @@ const CategoryList = () => {
   const loadCategories = async () => {
     try {
       setLoading(true);
-      const response = await api.get('http://localhost:8081/categories');
-      setCategories(response.data);
-    } catch (error) {
+      const data = await categoryService.getAllCategories();
+      setCategories(data);
+    }   catch (error) {
+      console.error('Error loading categories:', error);
       alert('Error al cargar categorías');
     } finally {
       setLoading(false);
@@ -49,10 +49,10 @@ const CategoryList = () => {
     }
     try {
       if (editingCategory) {
-        await api.put(`http://localhost:8081/categories/${editingCategory.id}`, formData);
+        await categoryService.updateCategory(editingCategory.id, formData);
         alert('✅ Categoría actualizada exitosamente');
       } else {
-        await api.post('http://localhost:8081/categories', formData);
+        await categoryService.createCategory(formData);
         alert('✅ Categoría creada exitosamente');
       }
       
@@ -80,7 +80,7 @@ const CategoryList = () => {
     }
     if (window.confirm('¿Estás seguro de eliminar esta categoría?')) {
       try {
-        await api.delete(`http://localhost:8081/categories/${id}`);
+        await categoryService.deleteCategory(id);
         alert('✅ Categoría eliminada exitosamente');
         loadCategories();
       } catch (error) {
