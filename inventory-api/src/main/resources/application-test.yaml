@@ -1,0 +1,27 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/inventory_test_db
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:CrudJava2026!}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    database: postgresql
+    open-in-view: false
+
+server:
+  port: ${SERVER_PORT:0}  # 0 = puerto aleatorio para evitar conflictos
+
+app:
+  jwt:
+    secret: test-secret-key-for-testing-only-min-32-chars-long
+    expiration: 86400000
+
+logging:
+  level:
+    com.kyoran.inventory_api: INFO
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN

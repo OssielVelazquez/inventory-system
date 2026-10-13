@@ -1,4 +1,4 @@
-// src/App.js - Versión corregida
+// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
@@ -14,6 +14,9 @@ import UserList from './components/UserList';
 import PrivateRoute from './components/PrivateRoute';
 import Navbar from './components/Navbar';
 
+// Import context
+import { ThemeProvider } from './context/ThemeContext';
+
 // Componente para verificar autenticación en ruta raíz
 const RootRedirect = () => {
   const token = localStorage.getItem('token');
@@ -25,57 +28,59 @@ const RootRedirect = () => {
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Ruta raíz - redirige según autenticación */}
-        <Route path="/" element={<RootRedirect />} />
-        
-        {/* Rutas públicas */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        
-        {/* Rutas protegidas */}
-        <Route path="/dashboard" element={
-          <PrivateRoute>
-            <MainLayout>
-              <Dashboard />
-            </MainLayout>
-          </PrivateRoute>
-        } />
-        
-        <Route path="/products" element={
-          <PrivateRoute>
-            <MainLayout>
-              <ProductList />
-            </MainLayout>
-          </PrivateRoute>
-        } />
-        
-        <Route path="/categories" element={
-          <PrivateRoute>
-            <MainLayout>
-              <CategoryList />
-            </MainLayout>
-          </PrivateRoute>
-        } />
-        
-        <Route path="/stock" element={
-          <PrivateRoute>
-            <MainLayout>
-              <StockList />
-            </MainLayout>
-          </PrivateRoute>
-        } />
-        
-        <Route path="/users" element={
-          <PrivateRoute adminOnly>
-            <MainLayout>
-              <UserList />
-            </MainLayout>
-          </PrivateRoute>
-        } />
-      </Routes>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          {/* Ruta raíz - redirige según autenticación */}
+          <Route path="/" element={<RootRedirect />} />
+
+          {/* Rutas públicas */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          {/* Rutas protegidas */}
+          <Route path="/dashboard" element={
+            <PrivateRoute>
+              <MainLayout>
+                <Dashboard />
+              </MainLayout>
+            </PrivateRoute>
+          } />
+
+          <Route path="/products" element={
+            <PrivateRoute>
+              <MainLayout>
+                <ProductList />
+              </MainLayout>
+            </PrivateRoute>
+          } />
+
+          <Route path="/categories" element={
+            <PrivateRoute>
+              <MainLayout>
+                <CategoryList />
+              </MainLayout>
+            </PrivateRoute>
+          } />
+
+          <Route path="/stock" element={
+            <PrivateRoute>
+              <MainLayout>
+                <StockList />
+              </MainLayout>
+            </PrivateRoute>
+          } />
+
+          <Route path="/users" element={
+            <PrivateRoute adminOnly>
+              <MainLayout>
+                <UserList />
+              </MainLayout>
+            </PrivateRoute>
+          } />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
 

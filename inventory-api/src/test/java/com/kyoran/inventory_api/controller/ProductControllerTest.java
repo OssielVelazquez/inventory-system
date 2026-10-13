@@ -1,7 +1,9 @@
 package com.kyoran.inventory_api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kyoran.inventory_api.entity.Categories;
 import com.kyoran.inventory_api.entity.Product;
+import com.kyoran.inventory_api.repository.CategoriesRepository;
 import com.kyoran.inventory_api.repository.ProductRepository;
 import com.kyoran.inventory_api.repository.StockRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -18,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 class ProductControllerTest {
 
     @Autowired
@@ -27,27 +31,35 @@ class ProductControllerTest {
     private ProductRepository productRepository;
 
     @Autowired
+    private CategoriesRepository categoriesRepository;
+
+    @Autowired
     private StockRepository stockRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
 
     private Product testProduct;
+    private Categories testCategory;
 
     @BeforeEach
     void setUp() {
-        // 1. Limpiar stock primero (por la FK constraint)
+        // 1. Limpiar en orden inverso a las FK
         stockRepository.deleteAll();
-
-        // 2. Ahora sí, limpiar productos
         productRepository.deleteAll();
+        categoriesRepository.deleteAll();
 
-        // 3. Crear un producto de prueba
+        // 2. Crear una categoría de prueba
+        testCategory = new Categories();
+        testCategory.setName("Test Category");
+        testCategory = categoriesRepository.save(testCategory);
+
+        // 3. Crear un producto de prueba asignándole la categoría
         testProduct = new Product();
         testProduct.setName("Test Product");
         testProduct.setDescription("Test Description");
         testProduct.setPrice(99.99);
-        testProduct.setCategory_id(1);
+        testProduct.setCategory_id(testCategory.getId());
         testProduct = productRepository.save(testProduct);
     }
 
@@ -77,7 +89,7 @@ class ProductControllerTest {
         newProduct.setName("New Product");
         newProduct.setDescription("New Description");
         newProduct.setPrice(49.99);
-        newProduct.setCategory_id(1);
+        newProduct.setCategory_id(testCategory.getId());
 
         mockMvc.perform(post("/products")
                         .contentType(MediaType.APPLICATION_JSON)
