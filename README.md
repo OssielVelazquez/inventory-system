@@ -38,6 +38,29 @@ Full stack inventory management system with JWT authentication and role-based ac
 - Integration tests with JUnit 5 + MockMvc
 - Fully dockerized
 
+## 📸 Screenshots
+
+### Login
+![Login](docs/login-light.jpg)
+
+### Dashboard
+![Dashboard](docs/dashboard-light.jpg)
+
+### Dashboard - Dark Mode
+![Dashboard Dark](docs/dashboard-dark.jpg)
+
+### Products
+![Products](docs/products-light.jpg)
+
+### Products - Dark Mode
+![Products Dark](docs/products-dark.jpg)
+
+### Categories
+![Categories](docs/categories-light.jpg)
+
+### Stock Management
+![Stock](docs/stock-light.jpg)
+
 ## 🎯 Roles & Permissions
 
 | Action | USER | MANAGER | ADMIN |
